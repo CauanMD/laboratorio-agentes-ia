@@ -1,0 +1,39 @@
+
+name: Renderizar vídeo de teste
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar código
+        uses: actions/checkout@v4
+
+      - name: Preparar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Renderizar vídeo
+        run: python scripts/render_video.py
+
+      - name: Salvar vídeo gerado
+        uses: actions/upload-artifact@v4
+        with:
+          name: video-teste
+          path: output/video_teste.mp4
+          retention-days: 7
